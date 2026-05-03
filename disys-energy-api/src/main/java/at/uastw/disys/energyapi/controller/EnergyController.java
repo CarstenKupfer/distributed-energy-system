@@ -2,17 +2,16 @@ package at.uastw.disys.energyapi.controller;
 
 import at.uastw.disys.energyapi.dto.CurrentPercentageDto;
 import at.uastw.disys.energyapi.dto.UsageDto;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
+@RequestMapping("/energy")
 public class EnergyController {
 
-    @GetMapping("/energy/current")
+    @GetMapping("/current")
     public CurrentPercentageDto getCurrentEnergy() {
         return new CurrentPercentageDto(
                 100.0,
@@ -20,7 +19,7 @@ public class EnergyController {
         );
     }
 
-    @GetMapping("/energy/historical")
+    @GetMapping("/historical")
     public List<UsageDto> getHistoricalEnergy(
             @RequestParam(required = false) LocalDateTime start,
             @RequestParam(required = false) LocalDateTime end
