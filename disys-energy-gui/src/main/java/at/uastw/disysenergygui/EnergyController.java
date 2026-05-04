@@ -104,6 +104,13 @@ public class EnergyController {
 
         } catch (NullPointerException e) {
             // if user forgets to choose timeframe
+            javafx.application.Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Input Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Please select timeframe!");
+                alert.showAndWait();
+            });
             System.out.println("Please select timeframe!");
         }
     }

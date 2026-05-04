@@ -25,9 +25,9 @@ public class EnergyController {
             @RequestParam(required = false) LocalDateTime end
     ) {
         List<UsageDto> data = List.of(
-                new UsageDto(LocalDateTime.of(2025, 1, 10, 14, 0), 18.05, 18.05, 1.076),
-                new UsageDto(LocalDateTime.of(2025, 1, 10, 13, 0), 15.015, 14.033, 2.049),
-                new UsageDto(LocalDateTime.of(2025, 1, 10, 12, 0), 13.8, 12.7, 1.55)
+                new UsageDto(LocalDateTime.of(2026, 5, 4, 14, 0), 18.05, 18.05, 1.076),
+                new UsageDto(LocalDateTime.of(2026, 5, 4, 13, 0), 15.015, 14.033, 2.049),
+                new UsageDto(LocalDateTime.of(2026, 5, 4, 12, 0), 13.8, 12.7, 1.55)
         );
         return data.stream()
                 .filter(d -> start == null||!d.getHour().isBefore(start))
