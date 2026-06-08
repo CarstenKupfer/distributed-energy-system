@@ -2,7 +2,13 @@ package at.uastw.disys.energyapi.controller;
 
 import at.uastw.disys.energyapi.dto.CurrentPercentageDto;
 import at.uastw.disys.energyapi.dto.UsageDto;
+import at.uastw.disys.energyapi.entity.CurrentPercentage;
+import at.uastw.disys.energyapi.entity.EnergyUsage;
+import at.uastw.disys.energyapi.repository.CurrentPercentageRepository;
+import at.uastw.disys.energyapi.repository.EnergyUsageRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,12 +17,26 @@ import java.util.List;
 @RequestMapping("/energy")
 public class EnergyController {
 
+    // repositories für datenbank
+    private final CurrentPercentageRepository currentPercentageRepository;
+    private final EnergyUsageRepository energyUsageRepository;
+
+    public EnergyController(CurrentPercentageRepository currentPercentageRepository, EnergyUsageRepository energyUsageRepository) {
+        this.currentPercentageRepository = currentPercentageRepository;
+        this.energyUsageRepository = energyUsageRepository;
+    }
+
     @GetMapping("/current")
     public CurrentPercentageDto getCurrentEnergy() {
-        return new CurrentPercentageDto(
-                100.0,
-                5.63
-        );
+        List<CurrentPercentage> list = currentPercentageRepository.findAll();
+
+        // falls datenbank leer ist
+        if (list.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No energy data available!");
+        }
+
+        CurrentPercentage latest = list.get(list.size() - 1);
+        return mapCurrentToDto(latest);
     }
 
     @GetMapping("/historical")
@@ -24,15 +44,28 @@ public class EnergyController {
             @RequestParam(required = false) LocalDateTime start,
             @RequestParam(required = false) LocalDateTime end
     ) {
-        List<UsageDto> data = List.of(
-                new UsageDto(LocalDateTime.of(2026, 5, 4, 14, 0), 18.05, 18.05, 1.076),
-                new UsageDto(LocalDateTime.of(2026, 5, 4, 13, 0), 15.015, 14.033, 2.049),
-                new UsageDto(LocalDateTime.of(2026, 5, 4, 12, 0), 13.8, 12.7, 1.55)
-        );
-        return data.stream()
-                .filter(d -> start == null||!d.getHour().isBefore(start))
-                .filter(d -> end == null||!d.getHour().isAfter(end))
+
+        return energyUsageRepository.findAll().stream()
+                .filter(d -> start == null || !d.getHour().isBefore(start))
+                .filter(d -> end == null || !d.getHour().isAfter(end))
+                .map(this::mapUsageToDto)
                 .toList();
     }
-}
 
+    //dto für GUI
+    private CurrentPercentageDto mapCurrentToDto(CurrentPercentage entity) {
+        return new CurrentPercentageDto(
+                entity.getCommunityDepleted(),
+                entity.getGridPortion()
+        );
+    }
+    // DTO für gui
+    private UsageDto mapUsageToDto(EnergyUsage entity) {
+        return new UsageDto(
+                entity.getHour(),
+                entity.getCommunityProduced(),
+                entity.getCommunityUsed(),
+                entity.getGridUsed()
+        );
+    }
+}
