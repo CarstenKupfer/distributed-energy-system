@@ -70,7 +70,8 @@ public class UsageService {
 
         energyUsageRepository.save(usage);
 
-        UsageUpdatedMessageDto updatedMessage = new UsageUpdatedMessageDto(hour);
+        UsageUpdatedMessageDto updatedMessage = new UsageUpdatedMessageDto(
+                usage.getHour(), usage.getCommunityProduced(), usage.getCommunityUsed(), usage.getGridUsed());
 
         String updateJson = objectMapper.writeValueAsString(updatedMessage);
 
