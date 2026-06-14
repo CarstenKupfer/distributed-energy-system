@@ -30,17 +30,7 @@ public class UsageService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @RabbitListener(queues = "energy_messages")
-    public void processEnergyMessage(String json) throws Exception {
-        EnergyMessageDto message = objectMapper.readValue(json, EnergyMessageDto.class);
-
-        LocalDateTime hour = message.getDatetime()
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0);
-
-        EnergyUsage usage = energyUsageRepository.findById(hour)
-                .orElse(new EnergyUsage(hour, 0.0, 0.0, 0.0));
+    public EnergyUsage applyMessage(EnergyUsage usage, EnergyMessageDto message) {
 
         if ("PRODUCER".equals(message.getType())) {
             usage.setCommunityProduced(
@@ -67,6 +57,23 @@ public class UsageService {
                     usage.getGridUsed() + gridPart
             );
         }
+
+        return usage;
+    }
+
+    @RabbitListener(queues = "energy_messages")
+    public void processEnergyMessage(String json) throws Exception {
+        EnergyMessageDto message = objectMapper.readValue(json, EnergyMessageDto.class);
+
+        LocalDateTime hour = message.getDatetime()
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+
+        EnergyUsage usage = energyUsageRepository.findById(hour)
+                .orElse(new EnergyUsage(hour, 0.0, 0.0, 0.0));
+
+        usage = applyMessage(usage, message);
 
         energyUsageRepository.save(usage);
 

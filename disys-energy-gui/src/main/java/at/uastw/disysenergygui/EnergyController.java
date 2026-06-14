@@ -41,6 +41,30 @@ public class EnergyController {
         producedCol.setCellValueFactory(new PropertyValueFactory<>("communityProduced"));
         usedCol.setCellValueFactory(new PropertyValueFactory<>("communityUsed"));
         gridCol.setCellValueFactory(new PropertyValueFactory<>("gridUsed"));
+
+        producedCol.setCellFactory(col -> new TableCell<UsageDto, Double>() {
+            @Override
+            protected void updateItem(Double value, boolean empty) {
+                super.updateItem(value, empty);
+                setText(empty || value == null ? null : String.format("%.2f", value));
+            }
+        });
+
+        usedCol.setCellFactory(col -> new TableCell<UsageDto, Double>() {
+            @Override
+            protected void updateItem(Double value, boolean empty) {
+                super.updateItem(value, empty);
+                setText(empty || value == null ? null : String.format("%.2f", value));
+            }
+        });
+
+        gridCol.setCellFactory(col -> new TableCell<UsageDto, Double>() {
+            @Override
+            protected void updateItem(Double value, boolean empty) {
+                super.updateItem(value, empty);
+                setText(empty || value == null ? null : String.format("%.2f", value));
+            }
+        });
     }
 
     @FXML

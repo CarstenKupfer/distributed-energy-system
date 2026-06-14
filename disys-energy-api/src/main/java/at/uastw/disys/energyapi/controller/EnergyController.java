@@ -45,7 +45,7 @@ public class EnergyController {
             @RequestParam(required = false) LocalDateTime end
     ) {
 
-        return energyUsageRepository.findAll().stream()
+        return energyUsageRepository.findAllByOrderByHourAsc().stream()
                 .filter(d -> start == null || !d.getHour().isBefore(start))
                 .filter(d -> end == null || !d.getHour().isAfter(end))
                 .map(this::mapUsageToDto)
