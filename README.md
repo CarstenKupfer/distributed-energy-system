@@ -90,3 +90,8 @@ Returns historical usage data for the selected period.
 ## Testing
 
 A unit test verifies the usage calculation logic based on the example provided in the project specification.
+
+## Team
+
+#### Developed by: 
+Annemarie Strele, Michael Reithofer, David Stevic  
