@@ -56,8 +56,10 @@ public class EnergyController {
                     try {
                         CurrentPercentageDto data = mapper.readValue(json, CurrentPercentageDto.class);
                         javafx.application.Platform.runLater(() -> {
-                            communityUsedLabel.setText("Community Pool: " + data.getCommunityDepleted() + "% used");
-                            gridPortionLabel.setText("Grid Portion: " + data.getGridPortion() + "%");
+                            communityUsedLabel.setText(
+                                    String.format("Community Pool: %.2f%% used", data.getCommunityDepleted()));
+                            gridPortionLabel.setText(
+                                    String.format("Grid Portion: %.2f%%", data.getGridPortion()));
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
