@@ -7,4 +7,6 @@ import java.time.LocalDateTime;
 
 @Repository
 public interface CurrentPercentageRepository extends JpaRepository<CurrentPercentage, LocalDateTime> {
+
+    CurrentPercentage findTopByOrderByHourDesc();
 }

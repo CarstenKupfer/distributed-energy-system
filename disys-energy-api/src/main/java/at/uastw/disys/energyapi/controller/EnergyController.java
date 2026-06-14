@@ -28,14 +28,14 @@ public class EnergyController {
 
     @GetMapping("/current")
     public CurrentPercentageDto getCurrentEnergy() {
-        List<CurrentPercentage> list = currentPercentageRepository.findAll();
 
-        // falls datenbank leer ist
-        if (list.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No energy data available!");
+        CurrentPercentage latest = currentPercentageRepository.findTopByOrderByHourDesc();
+
+        if(latest == null){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "No energy data available!"
+            );
         }
-
-        CurrentPercentage latest = list.get(list.size() - 1);
         return mapCurrentToDto(latest);
     }
 
